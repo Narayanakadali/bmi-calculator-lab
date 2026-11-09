@@ -12,6 +12,10 @@ A complete, examination-ready **BMI & Health Calculator** web application built 
 
 ## 🌟 Key Application Features
 
+- **Interactive Dual-Unit Input (Metric & Imperial):**
+  - **Height:** Seamless toggle between Centimeters (`cm`) and Feet & Inches (`ft & in`).
+  - **Weight:** Seamless toggle between Kilograms (`kg`) and Pounds (`lbs`).
+  - Displays instant live unit conversions (e.g., `170 cm ≈ 5 ft 7 in` and `70 kg ≈ 154.3 lbs`).
 - **Accurate Mathematical Computation:**
   - Implements standard WHO Body Mass Index formula: $\text{BMI} = \text{Weight (kg)} / (\text{Height in meters})^2$.
   - Displays calculated BMI rounded to one decimal place (e.g., $170\text{ cm}, 70\text{ kg} \rightarrow 24.2\text{ kg/m}^2$).

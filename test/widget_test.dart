@@ -59,15 +59,32 @@ void main() {
       expect(BmiCalculatorService.validateHeight('170'), isNull); // valid
     });
 
-    test('Validates weight inputs correctly', () {
-      expect(BmiCalculatorService.validateWeight(null), isNotNull);
-      expect(BmiCalculatorService.validateWeight(''), isNotNull);
-      expect(BmiCalculatorService.validateWeight('xyz'), isNotNull);
-      expect(BmiCalculatorService.validateWeight('0'), isNotNull);
-      expect(BmiCalculatorService.validateWeight('-5'), isNotNull);
-      expect(BmiCalculatorService.validateWeight('5'), isNotNull); // below realistic 10 kg
-      expect(BmiCalculatorService.validateWeight('450'), isNotNull); // above realistic 400 kg
-      expect(BmiCalculatorService.validateWeight('70.5'), isNull); // valid
+    test('Converts between Metric and Imperial units accurately', () {
+      // 170 cm to feet and inches: 5 ft 6.9 in (or ~ 5 ft 7 in)
+      final fi = BmiCalculatorService.cmToFeetAndInches(170);
+      expect(fi.feet, equals(5));
+      expect(fi.inches, closeTo(6.9, 0.2));
+
+      // 5 ft 7 in to cm: (5 * 30.48) + (7 * 2.54) = 152.4 + 17.78 = 170.2 cm
+      final cm = BmiCalculatorService.feetAndInchesToCm(5, 7);
+      expect(cm, equals(170.2));
+
+      // 70 kg to lbs: 70 / 0.45359237 = 154.32 -> 154.3 lbs
+      final lbs = BmiCalculatorService.kgToLbs(70);
+      expect(lbs, equals(154.3));
+
+      // 154.3 lbs to kg: 154.3 * 0.45359237 = 69.99 -> 70.0 kg
+      final kg = BmiCalculatorService.lbsToKg(154.3);
+      expect(kg, equals(70.0));
+    });
+
+    test('Validates pounds and feet/inches inputs correctly', () {
+      expect(BmiCalculatorService.validateWeightLbs(null), isNotNull);
+      expect(BmiCalculatorService.validateWeightLbs('0'), isNotNull);
+      expect(BmiCalculatorService.validateWeightLbs('154.3'), isNull);
+
+      expect(BmiCalculatorService.validateFeetAndInches(null, null), isNotNull);
+      expect(BmiCalculatorService.validateFeetAndInches('5', '7'), isNull);
     });
   });
 

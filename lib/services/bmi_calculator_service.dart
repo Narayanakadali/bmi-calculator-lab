@@ -133,7 +133,7 @@ class BmiCalculatorService {
 
   /// Converts Imperial feet and inches to metric centimeters.
   static double feetAndInchesToCm(int feet, double inches) {
-    return (feet * 30.48) + (inches * 2.54);
+    return roundToOneDecimal((feet * 30.48) + (inches * 2.54));
   }
 
   /// Converts metric centimeters to feet and inches tuple.
@@ -142,6 +142,70 @@ class BmiCalculatorService {
     final int feet = (totalInches / 12).floor();
     final double inches = roundToOneDecimal(totalInches % 12);
     return (feet: feet, inches: inches);
+  }
+
+  /// Converts pounds (lbs) to kilograms (kg).
+  static double lbsToKg(double lbs) {
+    return roundToOneDecimal(lbs * 0.45359237);
+  }
+
+  /// Converts kilograms (kg) to pounds (lbs).
+  static double kgToLbs(double kg) {
+    return roundToOneDecimal(kg / 0.45359237);
+  }
+
+  /// Converts total inches to centimeters.
+  static double inchesToCm(double inches) {
+    return roundToOneDecimal(inches * 2.54);
+  }
+
+  /// Converts centimeters to total inches.
+  static double cmToInches(double cm) {
+    return roundToOneDecimal(cm / 2.54);
+  }
+
+  /// Validates weight input entered in pounds (lbs).
+  static String? validateWeightLbs(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter your weight in pounds (lbs).';
+    }
+    final double? parsed = double.tryParse(value.trim());
+    if (parsed == null) {
+      return 'Invalid entry: weight must be a valid number.';
+    }
+    if (parsed <= 0) {
+      return 'Weight must be greater than zero.';
+    }
+    final double inKg = parsed * 0.45359237;
+    if (inKg < minRealisticWeightKg) {
+      return 'Weight must be at least ${(minRealisticWeightKg / 0.45359237).round()} lbs.';
+    }
+    if (inKg > maxRealisticWeightKg) {
+      return 'Weight must not exceed ${(maxRealisticWeightKg / 0.45359237).round()} lbs.';
+    }
+    return null;
+  }
+
+  /// Validates feet and inches inputs.
+  static String? validateFeetAndInches(String? feetStr, String? inchesStr) {
+    if ((feetStr == null || feetStr.trim().isEmpty) &&
+        (inchesStr == null || inchesStr.trim().isEmpty)) {
+      return 'Please enter your height in feet and inches.';
+    }
+    final int feet = int.tryParse(feetStr?.trim() ?? '0') ?? 0;
+    final double inches = double.tryParse(inchesStr?.trim() ?? '0') ?? 0.0;
+
+    if (feet < 0 || inches < 0) {
+      return 'Height values cannot be negative.';
+    }
+    if (feet == 0 && inches == 0) {
+      return 'Height must be greater than zero.';
+    }
+    final double totalCm = (feet * 30.48) + (inches * 2.54);
+    if (totalCm < minRealisticHeightCm || totalCm > maxRealisticHeightCm) {
+      return 'Height out of realistic range (approx 1 ft 8 in to 8 ft 6 in).';
+    }
+    return null;
   }
 
   /// Computes the visual gauge percentage (0.0 to 1.0) on a 15 to 40 scale.

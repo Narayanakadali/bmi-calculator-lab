@@ -130,6 +130,9 @@ class _BmiHealthAppState extends State<BmiHealthApp> {
   }
 }
 
+enum HeightUnit { cm, ftIn }
+enum WeightUnit { kg, lbs }
+
 class BmiCalculatorHomePage extends StatefulWidget {
   final VoidCallback onToggleTheme;
   final bool isDark;
@@ -147,9 +150,18 @@ class BmiCalculatorHomePage extends StatefulWidget {
 class _BmiCalculatorHomePageState extends State<BmiCalculatorHomePage> {
   final _formKey = GlobalKey<FormState>();
 
+  // Unit States
+  HeightUnit _heightUnit = HeightUnit.cm;
+  WeightUnit _weightUnit = WeightUnit.kg;
+
   // Text Controllers
   final TextEditingController _heightController = TextEditingController(text: '170');
+  final TextEditingController _feetController = TextEditingController(text: '5');
+  final TextEditingController _inchesController = TextEditingController(text: '7');
+
   final TextEditingController _weightController = TextEditingController(text: '70');
+  final TextEditingController _weightLbsController = TextEditingController(text: '154.3');
+
   final TextEditingController _ageController = TextEditingController(text: '22');
 
   String _selectedGender = 'Male';
@@ -167,15 +179,44 @@ class _BmiCalculatorHomePageState extends State<BmiCalculatorHomePage> {
   @override
   void initState() {
     super.initState();
+    _syncFromCmToFeetInches(170);
+    _syncFromKgToLbs(70);
     _loadHistory();
   }
 
   @override
   void dispose() {
     _heightController.dispose();
+    _feetController.dispose();
+    _inchesController.dispose();
     _weightController.dispose();
+    _weightLbsController.dispose();
     _ageController.dispose();
     super.dispose();
+  }
+
+  void _syncFromCmToFeetInches(double cm) {
+    final res = BmiCalculatorService.cmToFeetAndInches(cm);
+    _feetController.text = res.feet.toString();
+    _inchesController.text = res.inches.toStringAsFixed(1);
+  }
+
+  void _syncFromFeetInchesToCm() {
+    final int feet = int.tryParse(_feetController.text.trim()) ?? 0;
+    final double inches = double.tryParse(_inchesController.text.trim()) ?? 0.0;
+    final cm = BmiCalculatorService.feetAndInchesToCm(feet, inches);
+    _heightController.text = cm.toStringAsFixed(0);
+  }
+
+  void _syncFromKgToLbs(double kg) {
+    final lbs = BmiCalculatorService.kgToLbs(kg);
+    _weightLbsController.text = lbs.toStringAsFixed(1);
+  }
+
+  void _syncFromLbsToKg() {
+    final lbs = double.tryParse(_weightLbsController.text.trim()) ?? 154.0;
+    final kg = BmiCalculatorService.lbsToKg(lbs);
+    _weightController.text = kg.toStringAsFixed(1);
   }
 
   Future<void> _loadHistory() async {
@@ -198,8 +239,25 @@ class _BmiCalculatorHomePageState extends State<BmiCalculatorHomePage> {
       return;
     }
 
-    final double height = double.parse(_heightController.text.trim());
-    final double weight = double.parse(_weightController.text.trim());
+    double height;
+    if (_heightUnit == HeightUnit.cm) {
+      height = double.parse(_heightController.text.trim());
+    } else {
+      final int feet = int.tryParse(_feetController.text.trim()) ?? 0;
+      final double inches = double.tryParse(_inchesController.text.trim()) ?? 0.0;
+      height = BmiCalculatorService.feetAndInchesToCm(feet, inches);
+      _heightController.text = height.toStringAsFixed(0);
+    }
+
+    double weight;
+    if (_weightUnit == WeightUnit.kg) {
+      weight = double.parse(_weightController.text.trim());
+    } else {
+      final lbs = double.parse(_weightLbsController.text.trim());
+      weight = BmiCalculatorService.lbsToKg(lbs);
+      _weightController.text = weight.toStringAsFixed(1);
+    }
+
     final int? age = int.tryParse(_ageController.text.trim());
 
     final double bmi = BmiCalculatorService.calculateBmi(
@@ -238,7 +296,10 @@ class _BmiCalculatorHomePageState extends State<BmiCalculatorHomePage> {
     _formKey.currentState?.reset();
     setState(() {
       _heightController.clear();
+      _feetController.clear();
+      _inchesController.clear();
       _weightController.clear();
+      _weightLbsController.clear();
       _ageController.text = '22';
       _selectedGender = 'Male';
       _calculatedBmi = null;
@@ -259,7 +320,9 @@ class _BmiCalculatorHomePageState extends State<BmiCalculatorHomePage> {
   void _loadPreset(double heightCm, double weightKg) {
     setState(() {
       _heightController.text = heightCm.toStringAsFixed(0);
+      _syncFromCmToFeetInches(heightCm);
       _weightController.text = weightKg.toStringAsFixed(0);
+      _syncFromKgToLbs(weightKg);
     });
     _calculateBmi();
   }
@@ -267,7 +330,9 @@ class _BmiCalculatorHomePageState extends State<BmiCalculatorHomePage> {
   void _loadFromHistory(BmiRecord record) {
     setState(() {
       _heightController.text = record.heightCm.toStringAsFixed(0);
+      _syncFromCmToFeetInches(record.heightCm);
       _weightController.text = record.weightKg.toStringAsFixed(1);
+      _syncFromKgToLbs(record.weightKg);
       _calculatedBmi = record.bmi;
       _calculatedCategory = record.category;
       _lastHeight = record.heightCm;
@@ -300,19 +365,49 @@ class _BmiCalculatorHomePageState extends State<BmiCalculatorHomePage> {
   }
 
   void _adjustHeight(double delta) {
-    final current = double.tryParse(_heightController.text) ?? 170.0;
-    final updated = (current + delta).clamp(50.0, 250.0);
-    setState(() {
-      _heightController.text = updated.toStringAsFixed(0);
-    });
+    if (_heightUnit == HeightUnit.cm) {
+      final current = double.tryParse(_heightController.text) ?? 170.0;
+      final updated = (current + delta).clamp(50.0, 250.0);
+      setState(() {
+        _heightController.text = updated.toStringAsFixed(0);
+        _syncFromCmToFeetInches(updated);
+      });
+    } else {
+      final currentInches = double.tryParse(_inchesController.text) ?? 7.0;
+      int currentFeet = int.tryParse(_feetController.text) ?? 5;
+      double newInches = currentInches + delta;
+      if (newInches >= 12) {
+        currentFeet += (newInches / 12).floor();
+        newInches = newInches % 12;
+      } else if (newInches < 0) {
+        currentFeet -= 1;
+        newInches = (12 + newInches);
+      }
+      if (currentFeet < 1) currentFeet = 1;
+      setState(() {
+        _feetController.text = currentFeet.toString();
+        _inchesController.text = newInches.toStringAsFixed(1);
+        _syncFromFeetInchesToCm();
+      });
+    }
   }
 
   void _adjustWeight(double delta) {
-    final current = double.tryParse(_weightController.text) ?? 70.0;
-    final updated = (current + delta).clamp(10.0, 300.0);
-    setState(() {
-      _weightController.text = updated.toStringAsFixed(1);
-    });
+    if (_weightUnit == WeightUnit.kg) {
+      final current = double.tryParse(_weightController.text) ?? 70.0;
+      final updated = (current + delta).clamp(10.0, 300.0);
+      setState(() {
+        _weightController.text = updated.toStringAsFixed(1);
+        _syncFromKgToLbs(updated);
+      });
+    } else {
+      final current = double.tryParse(_weightLbsController.text) ?? 154.0;
+      final updated = (current + delta).clamp(22.0, 660.0);
+      setState(() {
+        _weightLbsController.text = updated.toStringAsFixed(1);
+        _syncFromLbsToKg();
+      });
+    }
   }
 
   @override
@@ -557,147 +652,323 @@ class _BmiCalculatorHomePageState extends State<BmiCalculatorHomePage> {
 
             const SizedBox(height: 20),
 
-            // Height Field
+            // Height Field with Unit Toggle
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Height (Centimeters)',
+                  'Height (${_heightUnit == HeightUnit.cm ? "Centimeters" : "Feet & Inches"})',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: isDark ? Colors.blueGrey[200] : Colors.blueGrey[800],
                   ),
                 ),
-                Text(
-                  'Range: 50 – 260 cm',
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: isDark ? Colors.blueGrey[400] : Colors.blueGrey[500],
-                  ),
+                _buildUnitToggle<HeightUnit>(
+                  current: _heightUnit,
+                  options: const {
+                    HeightUnit.cm: 'cm',
+                    HeightUnit.ftIn: 'ft & in',
+                  },
+                  onSelected: (unit) {
+                    setState(() {
+                      _heightUnit = unit;
+                    });
+                  },
+                  isDark: isDark,
                 ),
               ],
             ),
             const SizedBox(height: 8),
-            TextFormField(
-              controller: _heightController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              validator: BmiCalculatorService.validateHeight,
-              onChanged: (val) => setState(() {}),
-              decoration: InputDecoration(
-                hintText: 'e.g. 170',
-                prefixIcon: const Icon(Icons.height_rounded),
-                suffixText: 'cm',
-                suffixIcon: _heightController.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear_rounded, size: 18),
-                        onPressed: () {
-                          _heightController.clear();
-                          setState(() {});
-                        },
-                      )
-                    : null,
-              ),
-            ),
-            const SizedBox(height: 8),
 
-            // Height Quick Adjust Buttons & Slider
-            Slider(
-              value: currentHeight.clamp(50.0, 250.0),
-              min: 50.0,
-              max: 250.0,
-              divisions: 200,
-              label: '${currentHeight.toStringAsFixed(0)} cm',
-              onChanged: (newVal) {
-                setState(() {
-                  _heightController.text = newVal.toStringAsFixed(0);
-                });
-              },
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                _buildQuickAdjustButton('-5', () => _adjustHeight(-5), isDark),
-                const SizedBox(width: 6),
-                _buildQuickAdjustButton('-1', () => _adjustHeight(-1), isDark),
-                const SizedBox(width: 6),
-                _buildQuickAdjustButton('+1', () => _adjustHeight(1), isDark),
-                const SizedBox(width: 6),
-                _buildQuickAdjustButton('+5', () => _adjustHeight(5), isDark),
-              ],
-            ),
+            if (_heightUnit == HeightUnit.cm) ...[
+              TextFormField(
+                controller: _heightController,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                validator: BmiCalculatorService.validateHeight,
+                onChanged: (val) {
+                  final numVal = double.tryParse(val);
+                  if (numVal != null) _syncFromCmToFeetInches(numVal);
+                  setState(() {});
+                },
+                decoration: InputDecoration(
+                  hintText: 'e.g. 170',
+                  prefixIcon: const Icon(Icons.height_rounded),
+                  suffixText: 'cm',
+                  suffixIcon: _heightController.text.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.clear_rounded, size: 18),
+                          onPressed: () {
+                            _heightController.clear();
+                            setState(() {});
+                          },
+                        )
+                      : null,
+                ),
+              ),
+              const SizedBox(height: 6),
+              // Conversion note
+              Text(
+                '≈ ${_feetController.text} ft ${_inchesController.text} in (${(currentHeight / 2.54).toStringAsFixed(1)} total inches)',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontStyle: FontStyle.italic,
+                  color: isDark ? Colors.blueGrey[400] : Colors.blueGrey[600],
+                ),
+              ),
+              const SizedBox(height: 6),
+              // Slider
+              Slider(
+                value: currentHeight.clamp(50.0, 250.0),
+                min: 50.0,
+                max: 250.0,
+                divisions: 200,
+                label: '${currentHeight.toStringAsFixed(0)} cm',
+                onChanged: (newVal) {
+                  setState(() {
+                    _heightController.text = newVal.toStringAsFixed(0);
+                    _syncFromCmToFeetInches(newVal);
+                  });
+                },
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  _buildQuickAdjustButton('-5 cm', () => _adjustHeight(-5), isDark),
+                  const SizedBox(width: 6),
+                  _buildQuickAdjustButton('-1 cm', () => _adjustHeight(-1), isDark),
+                  const SizedBox(width: 6),
+                  _buildQuickAdjustButton('+1 cm', () => _adjustHeight(1), isDark),
+                  const SizedBox(width: 6),
+                  _buildQuickAdjustButton('+5 cm', () => _adjustHeight(5), isDark),
+                ],
+              ),
+            ] else ...[
+              // Feet and Inches dual fields
+              Row(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: TextFormField(
+                      controller: _feetController,
+                      keyboardType: TextInputType.number,
+                      validator: (val) => BmiCalculatorService.validateFeetAndInches(
+                        val,
+                        _inchesController.text,
+                      ),
+                      onChanged: (val) {
+                        _syncFromFeetInchesToCm();
+                        setState(() {});
+                      },
+                      decoration: const InputDecoration(
+                        labelText: 'Feet (ft)',
+                        hintText: '5',
+                        prefixIcon: Icon(Icons.straighten_rounded),
+                        suffixText: 'ft',
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    flex: 1,
+                    child: TextFormField(
+                      controller: _inchesController,
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      validator: (val) => BmiCalculatorService.validateFeetAndInches(
+                        _feetController.text,
+                        val,
+                      ),
+                      onChanged: (val) {
+                        _syncFromFeetInchesToCm();
+                        setState(() {});
+                      },
+                      decoration: const InputDecoration(
+                        labelText: 'Inches (in)',
+                        hintText: '7.0',
+                        prefixIcon: Icon(Icons.square_foot_rounded),
+                        suffixText: 'in',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              // Conversion note
+              Text(
+                '≈ ${_heightController.text} cm (${((double.tryParse(_feetController.text) ?? 0) * 12 + (double.tryParse(_inchesController.text) ?? 0)).toStringAsFixed(1)} total inches)',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontStyle: FontStyle.italic,
+                  color: isDark ? Colors.blueGrey[400] : Colors.blueGrey[600],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  _buildQuickAdjustButton('-1 in', () => _adjustHeight(-1), isDark),
+                  const SizedBox(width: 6),
+                  _buildQuickAdjustButton('+1 in', () => _adjustHeight(1), isDark),
+                  const SizedBox(width: 6),
+                  _buildQuickAdjustButton('-1 ft', () => _adjustHeight(-12), isDark),
+                  const SizedBox(width: 6),
+                  _buildQuickAdjustButton('+1 ft', () => _adjustHeight(12), isDark),
+                ],
+              ),
+            ],
 
             const SizedBox(height: 20),
 
-            // Weight Field
+            // Weight Field with Unit Toggle
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Weight (Kilograms)',
+                  'Weight (${_weightUnit == WeightUnit.kg ? "Kilograms" : "Pounds"})',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: isDark ? Colors.blueGrey[200] : Colors.blueGrey[800],
                   ),
                 ),
-                Text(
-                  'Range: 10 – 400 kg',
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: isDark ? Colors.blueGrey[400] : Colors.blueGrey[500],
-                  ),
+                _buildUnitToggle<WeightUnit>(
+                  current: _weightUnit,
+                  options: const {
+                    WeightUnit.kg: 'kg',
+                    WeightUnit.lbs: 'lbs',
+                  },
+                  onSelected: (unit) {
+                    setState(() {
+                      _weightUnit = unit;
+                    });
+                  },
+                  isDark: isDark,
                 ),
               ],
             ),
             const SizedBox(height: 8),
-            TextFormField(
-              controller: _weightController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              validator: BmiCalculatorService.validateWeight,
-              onChanged: (val) => setState(() {}),
-              decoration: InputDecoration(
-                hintText: 'e.g. 70.0',
-                prefixIcon: const Icon(Icons.fitness_center_rounded),
-                suffixText: 'kg',
-                suffixIcon: _weightController.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear_rounded, size: 18),
-                        onPressed: () {
-                          _weightController.clear();
-                          setState(() {});
-                        },
-                      )
-                    : null,
-              ),
-            ),
-            const SizedBox(height: 8),
 
-            // Weight Quick Adjust Buttons & Slider
-            Slider(
-              value: currentWeight.clamp(10.0, 200.0),
-              min: 10.0,
-              max: 200.0,
-              divisions: 190,
-              label: '${currentWeight.toStringAsFixed(1)} kg',
-              onChanged: (newVal) {
-                setState(() {
-                  _weightController.text = newVal.toStringAsFixed(1);
-                });
-              },
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                _buildQuickAdjustButton('-5', () => _adjustWeight(-5), isDark),
-                const SizedBox(width: 6),
-                _buildQuickAdjustButton('-1', () => _adjustWeight(-1), isDark),
-                const SizedBox(width: 6),
-                _buildQuickAdjustButton('+1', () => _adjustWeight(1), isDark),
-                const SizedBox(width: 6),
-                _buildQuickAdjustButton('+5', () => _adjustWeight(5), isDark),
-              ],
-            ),
+            if (_weightUnit == WeightUnit.kg) ...[
+              TextFormField(
+                controller: _weightController,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                validator: BmiCalculatorService.validateWeight,
+                onChanged: (val) {
+                  final numVal = double.tryParse(val);
+                  if (numVal != null) _syncFromKgToLbs(numVal);
+                  setState(() {});
+                },
+                decoration: InputDecoration(
+                  hintText: 'e.g. 70.0',
+                  prefixIcon: const Icon(Icons.fitness_center_rounded),
+                  suffixText: 'kg',
+                  suffixIcon: _weightController.text.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.clear_rounded, size: 18),
+                          onPressed: () {
+                            _weightController.clear();
+                            setState(() {});
+                          },
+                        )
+                      : null,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                '≈ ${_weightLbsController.text} lbs',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontStyle: FontStyle.italic,
+                  color: isDark ? Colors.blueGrey[400] : Colors.blueGrey[600],
+                ),
+              ),
+              const SizedBox(height: 6),
+              Slider(
+                value: currentWeight.clamp(10.0, 200.0),
+                min: 10.0,
+                max: 200.0,
+                divisions: 190,
+                label: '${currentWeight.toStringAsFixed(1)} kg',
+                onChanged: (newVal) {
+                  setState(() {
+                    _weightController.text = newVal.toStringAsFixed(1);
+                    _syncFromKgToLbs(newVal);
+                  });
+                },
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  _buildQuickAdjustButton('-5 kg', () => _adjustWeight(-5), isDark),
+                  const SizedBox(width: 6),
+                  _buildQuickAdjustButton('-1 kg', () => _adjustWeight(-1), isDark),
+                  const SizedBox(width: 6),
+                  _buildQuickAdjustButton('+1 kg', () => _adjustWeight(1), isDark),
+                  const SizedBox(width: 6),
+                  _buildQuickAdjustButton('+5 kg', () => _adjustWeight(5), isDark),
+                ],
+              ),
+            ] else ...[
+              // Pounds (lbs) Field
+              TextFormField(
+                controller: _weightLbsController,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                validator: BmiCalculatorService.validateWeightLbs,
+                onChanged: (val) {
+                  _syncFromLbsToKg();
+                  setState(() {});
+                },
+                decoration: InputDecoration(
+                  hintText: 'e.g. 154.3',
+                  prefixIcon: const Icon(Icons.fitness_center_rounded),
+                  suffixText: 'lbs',
+                  suffixIcon: _weightLbsController.text.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.clear_rounded, size: 18),
+                          onPressed: () {
+                            _weightLbsController.clear();
+                            setState(() {});
+                          },
+                        )
+                      : null,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                '≈ ${_weightController.text} kg',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontStyle: FontStyle.italic,
+                  color: isDark ? Colors.blueGrey[400] : Colors.blueGrey[600],
+                ),
+              ),
+              const SizedBox(height: 6),
+              Slider(
+                value: (double.tryParse(_weightLbsController.text) ?? 154.0).clamp(22.0, 440.0),
+                min: 22.0,
+                max: 440.0,
+                divisions: 209,
+                label: '${(double.tryParse(_weightLbsController.text) ?? 154.0).toStringAsFixed(1)} lbs',
+                onChanged: (newVal) {
+                  setState(() {
+                    _weightLbsController.text = newVal.toStringAsFixed(1);
+                    _syncFromLbsToKg();
+                  });
+                },
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  _buildQuickAdjustButton('-10 lbs', () => _adjustWeight(-10), isDark),
+                  const SizedBox(width: 6),
+                  _buildQuickAdjustButton('-2 lbs', () => _adjustWeight(-2), isDark),
+                  const SizedBox(width: 6),
+                  _buildQuickAdjustButton('+2 lbs', () => _adjustWeight(2), isDark),
+                  const SizedBox(width: 6),
+                  _buildQuickAdjustButton('+10 lbs', () => _adjustWeight(10), isDark),
+                ],
+              ),
+            ],
 
             const SizedBox(height: 20),
 
@@ -773,6 +1044,51 @@ class _BmiCalculatorHomePageState extends State<BmiCalculatorHomePage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildUnitToggle<T>({
+    required T current,
+    required Map<T, String> options,
+    required ValueChanged<T> onSelected,
+    required bool isDark,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF0F172A) : const Color(0xFFE2E8F0),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: isDark ? const Color(0xFF334155) : const Color(0xFFCBD5E1),
+        ),
+      ),
+      padding: const EdgeInsets.all(2),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: options.entries.map((entry) {
+          final isSelected = entry.key == current;
+          return InkWell(
+            borderRadius: BorderRadius.circular(6),
+            onTap: () => onSelected(entry.key),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: isSelected ? const Color(0xFF0284C7) : Colors.transparent,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                entry.value,
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                  color: isSelected
+                      ? Colors.white
+                      : (isDark ? Colors.blueGrey[300] : Colors.blueGrey[700]),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }
@@ -929,6 +1245,31 @@ class _BmiCalculatorHomePageState extends State<BmiCalculatorHomePage> {
                   fontWeight: FontWeight.w700,
                   color: isDark ? Colors.white : Colors.blueGrey[900],
                 ),
+              ),
+              const SizedBox(height: 8),
+              Builder(
+                builder: (context) {
+                  final imperialHeight = BmiCalculatorService.cmToFeetAndInches(height);
+                  final lbsWeight = BmiCalculatorService.kgToLbs(weight);
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: isDark ? const Color(0xFF334155) : const Color(0xFFCBD5E1),
+                      ),
+                    ),
+                    child: Text(
+                      '${height.toStringAsFixed(0)} cm (${imperialHeight.feet}\' ${imperialHeight.inches.toStringAsFixed(1)}")  •  ${weight.toStringAsFixed(1)} kg ($lbsWeight lbs)',
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.blueGrey[300] : Colors.blueGrey[700],
+                      ),
+                    ),
+                  );
+                },
               ),
 
               const SizedBox(height: 24),
