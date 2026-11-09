@@ -85,14 +85,15 @@ lib/
 
 ---
 
-## 🌐 Deploying to GitHub Pages (College Submission)
+## 🌐 Live Application URL & Deployment
 
-1. **Commit and Push to GitHub:**
+- **Live URL:** [https://narayanakadali.github.io/bmi-calculator-lab/](https://narayanakadali.github.io/bmi-calculator-lab/)
+- **Repository:** [https://github.com/Narayanakadali/bmi-calculator-lab](https://github.com/Narayanakadali/bmi-calculator-lab)
+
+### Deploying to GitHub Pages (College Submission)
+
+1. **Push to GitHub:**
    ```bash
-   git add .
-   git commit -m "Complete College UI Flutter Lab BMI Project"
-   git remote add origin https://github.com/<YOUR_GITHUB_USERNAME>/<YOUR_REPOSITORY_NAME>.git
-   git branch -M main
    git push -u origin main
    ```
 2. **Enable GitHub Pages:**
@@ -100,7 +101,7 @@ lib/
    - Under **Build and deployment** > **Source**, choose **GitHub Actions**.
 3. GitHub Actions (`.github/workflows/deploy.yml`) will automatically build, test, and host the web application at:
    ```
-   https://<YOUR_GITHUB_USERNAME>.github.io/<YOUR_REPOSITORY_NAME>/
+   https://narayanakadali.github.io/bmi-calculator-lab/
    ```
 4. Copy and paste the live URL into the college examination submission Google Sheet.
 

@@ -329,9 +329,6 @@ The application is prepared for immediate deployment using two industry-standard
 ### 9.1 Option A: GitHub Pages via GitHub Actions (Recommended)
 1. Push the project repository to GitHub:
    ```bash
-   git add .
-   git commit -m "Complete College UI Flutter Lab BMI Project"
-   git remote add origin https://github.com/<YOUR_GITHUB_USERNAME>/<YOUR_REPOSITORY_NAME>.git
    git branch -M main
    git push -u origin main
    ```
@@ -341,10 +338,10 @@ The application is prepared for immediate deployment using two industry-standard
 3. The `.github/workflows/deploy.yml` workflow triggers automatically:
    - Sets up the Flutter SDK.
    - Executes `flutter test`.
-   - Builds the production web app with `--base-href "/<YOUR_REPOSITORY_NAME>/"`.
+   - Builds the production web app with `--base-href "/bmi-calculator-lab/"`.
    - Publishes the build to GitHub Pages.
 4. The live application will be available at:
-   $$\text{https://<YOUR\_GITHUB\_USERNAME>.github.io/<YOUR\_REPOSITORY\_NAME>/}$$
+   $$\text{https://narayanakadali.github.io/bmi-calculator-lab/}$$
 
 ---
 
