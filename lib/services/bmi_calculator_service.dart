@@ -1,5 +1,4 @@
 import 'dart:math' as math;
-import '../models/bmi_category.dart';
 
 /// Pure calculation and validation service for BMI operations.
 /// Encapsulates formulas, validation rules, and healthy weight range logic.
