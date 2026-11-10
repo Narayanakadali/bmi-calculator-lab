@@ -8,7 +8,7 @@ This document contains the exact concise text to write in your physical exam ans
 ## PART 1: ANSWER BOOKLET WRITE-UP (COPY TO ANSWER BOOKLET)
 
 ### 1. APPLICATION NAME
-**BMI & Health Calculator (Flutter Web)**
+**VitalScale: Smart Anthropometric & Health Companion for Adults (Flutter Web)**
 
 ### 2. DESCRIPTION
 A modern, responsive healthcare dashboard application developed using Flutter Web and Dart under Material Design 3. The application calculates Body Mass Index (BMI) using standard anthropometric formulas, evaluates clinical weight categories according to WHO thresholds, calculates individual healthy weight boundaries, provides tailored dietary guidance, and maintains client-side calculation logs using browser LocalStorage.

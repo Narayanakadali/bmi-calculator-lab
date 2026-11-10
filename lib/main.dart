@@ -117,7 +117,7 @@ class _BmiHealthAppState extends State<BmiHealthApp> {
     );
 
     return MaterialApp(
-      title: 'BMI & Health Calculator',
+      title: 'VitalScale: BMI & Health Calculator',
       debugShowCheckedModeBanner: false,
       theme: lightTheme,
       darkTheme: darkTheme,
@@ -440,7 +440,7 @@ class _BmiCalculatorHomePageState extends State<BmiCalculatorHomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'BMI & Health Calculator',
+                  'VitalScale: BMI & Health Calculator',
                   style: TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w800,

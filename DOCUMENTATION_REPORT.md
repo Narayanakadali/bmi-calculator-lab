@@ -1,126 +1,325 @@
-# LABORATORY EXTERNAL EXAMINATION REPORT
-## SUBJECT: MOBILE & WEB APPLICATION DEVELOPMENT (FLUTTER LAB)
+# PROJECT DOCUMENTATION REPORT
+
+## **VitalScale**
+### *Smart Anthropometric & Health Companion for Adults*
+
+**Submitted in partial fulfillment of the requirements for:**  
+**UI Design – Flutter (CS506PC) External Laboratory Examination**
 
 ---
 
-### **PROJECT TITLE:** BMI & HEALTH CALCULATOR (FLUTTER WEB)
-**Platform:** Flutter Web (Dart 3.x, Flutter 3.x)  
-**UI Standard:** Material Design 3 (M3)  
-**Student Name:** Narayana Kadali  
-**Academic Year:** 2026 – 2027  
-**Submission Target:** College UI Flutter Lab External Examination  
-**Deployment Platform:** GitHub Pages / Vercel  
+### Student & Examination Particulars
+
+| Particulars | Details |
+| :--- | :--- |
+| **Student Name** | Narayana Kadali |
+| **Roll Number / Hall Ticket Number** | 24XV1M05XX *(Insert your Roll Number)* |
+| **Programme & Branch** | B. Tech - Computer Science & Engineering (CSE) |
+| **Institution** | Department of Computer Science & Engineering |
+| **Academic Year** | 2026 - 2027 |
+| **Semester** | III – I / IV – I |
+| **Course Code & Title** | CS506PC: UI Design – Flutter Laboratory |
+| **Repository** | [https://github.com/Narayanakadali/bmi-calculator-lab](https://github.com/Narayanakadali/bmi-calculator-lab) |
+| **Live Application** | [https://narayanakadali.github.io/bmi-calculator-lab/](https://narayanakadali.github.io/bmi-calculator-lab/) |
 
 ---
 
-## 1. APPLICATION INTRODUCTION
+### Project Overview
 
-**Body Mass Index (BMI)** is an internationally recognized, standardized biometric screening metric established by the World Health Organization (WHO) to categorize an individual's weight relative to height.
-
-The **BMI & Health Calculator** is a modern, responsive, high-performance Flutter Web application developed specifically for the College UI Flutter Laboratory External Examination. Built from the ground up using Flutter's Material 3 framework, it combines clinical accuracy with a clean healthcare dashboard user interface.
-
-Beyond traditional static calculators, this application provides:
-- Dynamic, real-time input validation.
-- Interactive dual-control input mechanisms (numeric text controllers, touch sliders, and fine-tuning increment buttons).
-- An animated, mathematically mapped visual BMI gauge with precision needle indicator.
-- Clinically valid healthy weight range calculations using exact algebraic formulas.
-- Category-tailored dietary and lifestyle guidance.
-- Client-side persistent calculation history utilizing browser `LocalStorage` via the `shared_preferences` platform plugin, without requiring any external database or backend server.
+| Project Details | Specifications |
+| :--- | :--- |
+| **Project Title** | VitalScale (BMI & Health Calculator) |
+| **Project Type** | Web Application |
+| **Platform** | Flutter Web |
+| **Programming Language** | Dart (Version 3.13.7) |
+| **UI Framework** | Material 3 (Material Design M3) |
+| **Data Storage** | SharedPreferences (HTML5 Local Browser Storage) |
+| **Deployment** | GitHub Actions CI/CD and GitHub Pages |
+| **Live Application** | [https://narayanakadali.github.io/bmi-calculator-lab/](https://narayanakadali.github.io/bmi-calculator-lab/) |
+| **Source Code** | [https://github.com/Narayanakadali/bmi-calculator-lab](https://github.com/Narayanakadali/bmi-calculator-lab) |
 
 ---
 
-## 2. PURPOSE AND OBJECTIVES
+## Table of Contents
+1. **App Name and Introduction**
+2. **Purpose and Objectives**
+3. **Tools and Technologies**
+4. **Features and Functionality**
+5. **Important Code Snippets**
+6. **Deployment Details**
+7. **Screenshots / UI Output**
+
+---
+
+## 1. App Name and Introduction
+
+- **App Name:** VitalScale
+- **Tagline:** *Smart Anthropometric & Health Companion for Adults*
+
+**VitalScale** is a modern, responsive, client-side Flutter Web application engineered for the UI Design – Flutter Laboratory External Examination. It empowers users to monitor and assess their physical health parameters through clinically validated anthropometric algorithms defined by the World Health Organization (WHO).
+
+The application provides:
+- Dual-unit body measurement inputs supporting both Metric (Centimeters, Kilograms) and Imperial (Feet & Inches, Pounds).
+- Instant Body Mass Index (BMI) computation rounded strictly to one decimal place.
+- Dynamic color-coded WHO category classification (Underweight, Normal Weight, Overweight, Obesity).
+- Precise mathematical healthy weight range calculations ($18.5 \times H^2$ to $24.9 \times H^2$).
+- A custom-painted, animated visual gauge indicating the exact BMI needle position on a continuous scale.
+- Category-tailored dietary and physical activity recommendations.
+- Local calculation history tracking with persistent storage via `SharedPreferences`.
+- One-tap viva examination test presets.
+- Theme switching between modern Material 3 Light Mode and Dark Mode.
+
+VitalScale is developed in Dart using Flutter 3.x and is deployed as a live cloud web application through automated GitHub Actions workflows published to GitHub Pages.
+
+---
+
+## 2. Purpose and Objectives
 
 ### 2.1 Purpose
-The primary purpose of this project is to develop a reliable, cross-browser health screening web application that demonstrates mastery of the Flutter framework, reactive state management, asynchronous client-side storage, responsive layout design, and modern continuous integration / continuous deployment (CI/CD) pipelines.
+The purpose of VitalScale is to deliver a reliable, accessible, and user-friendly biometric screening dashboard that assists individuals in evaluating their body mass classification against clinical standards, while demonstrating professional proficiency in Flutter Web design, defensive input validation, asynchronous browser storage, and automated cloud CI/CD pipelines.
 
 ### 2.2 Objectives
-1. **Accurate Anthropometric Computation:** Implement the standard WHO Body Mass Index algorithm and healthy weight range bounds rounded strictly to one decimal place.
-2. **Defensive Input Handling:** Prevent application crashes and mathematical anomalies (division by zero, negative numbers, non-numeric inputs, and unrealistic physiological values) through robust input validation.
-3. **Dynamic Visual Feedback:** Develop a mathematically meaningful visual scale displaying the four primary WHO categories (Underweight, Normal, Overweight, Obesity) with animated cursor positioning.
-4. **Persistent Client-Side State:** Store calculation logs locally on the client's browser, permitting history tracking, reloading past evaluations, and clearing history on demand.
-5. **Modern Material 3 UX:** Provide a professional healthcare aesthetic supporting dynamic Light and Dark theme modes, fluid responsive transitions across mobile, tablet, and desktop viewports, and one-tap viva examination test presets.
-6. **Cloud Web Deployment:** Configure automated GitHub Actions workflows to build, test, and deploy the application to GitHub Pages.
+1. **Clinical Accuracy:** Compute Body Mass Index according to standard WHO formulas: $\text{BMI} = \text{Weight (kg)} / (\text{Height in meters})^2$.
+2. **Dual-Unit Flexibility:** Enable seamless, live two-way switching between Metric units (cm, kg) and Imperial units (ft/in, lbs) with instant conversion feedback.
+3. **Defensive Validation:** Prevent crashes and invalid computations by validating empty inputs, zero values, negative entries, non-numeric characters, and unrealistic physiological values ($50-260\text{ cm}$, $10-400\text{ kg}$).
+4. **Dynamic Visual Feedback:** Provide a mathematically mapped, animated segmented scale with an indicator needle showing the user's BMI position.
+5. **Healthy Weight Boundary Analysis:** Compute the ideal healthy weight interval for the entered height and state the exact delta required to reach a normal weight.
+6. **Client-Side Data Persistence:** Store calculation history locally using browser `LocalStorage` via `SharedPreferences`, avoiding external database requirements.
+7. **Examination Demonstration Readiness:** Provide one-tap test presets for Underweight, Normal, Overweight, and Obesity cases for fast viva evaluation.
+8. **Responsive Material 3 Design:** Ensure seamless adaptability across desktop widescreen monitors, tablets, and mobile smartphones in both light and dark themes.
+9. **Cloud Web Deployment:** Automate building, testing, and continuous hosting via GitHub Pages.
 
 ---
 
-## 3. TOOLS AND TECHNOLOGIES USED
+## 3. Tools and Technologies
 
-| Component / Layer | Technology / Tool | Version / Specification | Role in Project |
-| :--- | :--- | :--- | :--- |
-| **Core Framework** | Flutter | 3.47.9 (Stable Channel) | Cross-platform UI toolkit compiling to Web / CanvasKit |
-| **Language** | Dart | 3.13.7 | Strongly-typed, object-oriented language |
-| **Design System** | Material Design 3 | Material 3 Specification | Modern typography, dynamic seed theming, elevated cards |
-| **Local Storage** | `shared_preferences` | ^2.3.2 | Persistent key-value storage backed by HTML5 `LocalStorage` |
-| **Date Formatting** | `intl` | ^0.19.0 | Locale-aware date and timestamp formatting |
-| **Testing Harness** | `flutter_test` | Flutter SDK | Unit tests for math algorithms and widget smoke tests |
-| **Version Control** | Git & GitHub | Git 2.x | Distributed source code versioning |
-| **CI/CD & Hosting** | GitHub Actions & Pages | Ubuntu Runner / Pages API | Automated testing, build compilation, and live web hosting |
-| **IDE** | Antigravity IDE | Visual Studio Code engine | Code editing, debugging, static analysis |
-| **Browser** | Google Chrome | Version 120+ | Execution, DOM inspection, and responsive testing |
+| Category | Tools Used |
+| :--- | :--- |
+| **Frontend Framework** | Flutter Web 3.47.9 (Stable Channel) |
+| **Language** | Dart 3.13.7 |
+| **UI Design System** | Material Design 3 (M3) Specification |
+| **Development Tools** | Antigravity IDE, Visual Studio Code, Chrome DevTools |
+| **Data Storage** | `shared_preferences: ^2.3.2` (HTML5 LocalStorage) |
+| **Utility Packages** | `intl: ^0.19.0` (Locale-aware date & time formatting) |
+| **Testing Harness** | `flutter_test` (Unit and Widget Integration Testing) |
+| **Version Control** | Git, GitHub |
+| **CI/CD & Deployment** | GitHub Actions, GitHub Pages, Vercel |
 
----
+*Table 1: Tools and technologies used in VitalScale*
 
-## 4. MATHEMATICAL FORMULAS & CLINICAL LOGIC
-
-### 4.1 Body Mass Index (BMI)
-$$\text{BMI} = \frac{\text{Weight in Kilograms}}{(\text{Height in Meters})^2} = \frac{W}{(H / 100)^2}$$
-
-#### Step-by-Step Calculation Example:
-- **Given Height ($H$):** $170\text{ cm} = 1.70\text{ m}$
-- **Given Weight ($W$):** $70.0\text{ kg}$
-- **Formula:**
-  $$\text{BMI} = \frac{70}{(1.70 \times 1.70)} = \frac{70}{2.89} = 24.22145...$$
-- **Rounded to 1 Decimal Place:** **$24.2\text{ kg/m}^2$**
-- **Classification:** **Normal Weight** ($18.5 \le 24.2 < 25.0$)
+> **Note on Data Storage:** `SharedPreferences` is used to persist historical calculation records directly inside the client's browser `LocalStorage`. Consequently, user records persist across browser reloads without requiring any backend server or database infrastructure.
 
 ---
 
-### 4.2 Healthy Weight Range
-Using the normal BMI boundaries established by the World Health Organization ($18.5$ and $24.9$):
+## 4. Features and Functionality
 
-$$\text{Minimum Healthy Weight} = 18.5 \times (H\text{ in meters})^2$$
-$$\text{Maximum Healthy Weight} = 24.9 \times (H\text{ in meters})^2$$
+### 4.1 Dual-Unit Body Parameter Inputs
+VitalScale accommodates user preferences by supporting both Metric and Imperial units:
+- **Height Selection:**
+  - *Centimeters (`cm`):* Text input field, interactive slider ($50 - 250\text{ cm}$), and quick $\pm 1\text{ cm}$ / $\pm 5\text{ cm}$ buttons. Live subtitle shows: `≈ 5 ft 7 in (66.9 inches)`.
+  - *Feet & Inches (`ft & in`):* Dedicated dual fields for Feet (ft) and Inches (in) with live conversion to centimeters and $\pm 1\text{ in}$ / $\pm 1\text{ ft}$ buttons.
+- **Weight Selection:**
+  - *Kilograms (`kg`):* Text input field, interactive slider ($10 - 200\text{ kg}$), and quick $\pm 1\text{ kg}$ / $\pm 5\text{ kg}$ buttons. Live subtitle shows: `≈ 154.3 lbs`.
+  - *Pounds (`lbs`):* Text input field, interactive slider ($22 - 440\text{ lbs}$), and quick $\pm 2\text{ lbs}$ / $\pm 10\text{ lbs}$ buttons. Live subtitle shows: `≈ 70.0 kg`.
+- **Gender & Age Context:** Optional selection chips for Male, Female, and Other, plus an age field for clinical screening context.
 
-#### Example for $170\text{ cm}$ ($1.70\text{ m}$):
-$$\text{Min Weight} = 18.5 \times (1.70)^2 = 18.5 \times 2.89 = 53.465 \approx 53.5\text{ kg}$$
-$$\text{Max Weight} = 24.9 \times (1.70)^2 = 24.9 \times 2.89 = 71.961 \approx 72.0\text{ kg}$$
-$$\textbf{Healthy Weight Range: } 53.5\text{ kg} \text{ to } 72.0\text{ kg}$$
+### 4.2 Precision Body Mass Index (BMI) Engine
+Calculates Body Mass Index using the standard algebraic equation:
+$$\text{BMI} = \frac{\text{Weight in Kilograms}}{(\text{Height in Meters})^2}$$
+The output is rounded strictly to one decimal place (e.g., $170\text{ cm}, 70.0\text{ kg} \rightarrow \mathbf{24.2\text{ kg/m}^2}$).
+
+### 4.3 WHO Classification & Dynamic Badges
+Calculated results are mapped into standard World Health Organization adult categories:
+- **Underweight:** $\text{BMI} < 18.5$ — Sky Blue badge (`#0288D1`)
+- **Normal Weight:** $\text{BMI } 18.5 - 24.9$ — Emerald Green badge (`#2E7D32`)
+- **Overweight:** $\text{BMI } 25.0 - 29.9$ — Amber/Orange badge (`#F57C00`)
+- **Obesity:** $\text{BMI } \ge 30.0$ — Crimson Red badge (`#D32F2F`)
+
+### 4.4 Estimated Healthy Weight Range & Target Delta
+Based on the entered height, the application computes:
+- $\text{Minimum Healthy Weight} = 18.5 \times (H\text{ in meters})^2$
+- $\text{Maximum Healthy Weight} = 24.9 \times (H\text{ in meters})^2$
+- **Weight Difference Status:** Informs whether the user is within the healthy zone, or how many kilograms they are above/below the normal threshold.
+
+### 4.5 Mathematically Calibrated Segmented Visual Gauge
+A custom visual progress gauge displays the four WHO categories across a continuous horizontal scale ($15.0 - 40.0$). An animated indicator needle with an elevated numeric bubble smoothly glides to the exact computed BMI position using an easing curve.
+
+### 4.6 Tailored Dietary & Physical Activity Guidance
+Dynamically renders clinical lifestyle recommendations:
+- **Dietary Advice:** Nutritional advice customized to the active category (e.g., lean protein and whole grains for Normal; caloric density for Underweight; portion moderation for Overweight/Obese).
+- **Physical Activity:** Recommended exercise routines (e.g., 150 minutes of weekly aerobic exercise; resistance training; low-impact routines).
+
+### 4.7 Local Calculation History & Persistent Storage
+Recent BMI calculations are stored in browser `LocalStorage` via `SharedPreferences`. The history view displays:
+- Calculated BMI score and WHO category badge.
+- Recorded height and weight in both metric and imperial formats.
+- Timestamp formatted using `intl` (e.g., `Nov 10, 2026 • 08:00 AM`).
+- Reload past record on tap, single record deletion, and clear-all confirmation dialog.
+
+### 4.8 One-Tap Viva Examination Demonstration Presets
+Four instant preset buttons are available at the top of the interface:
+- **Underweight Demo:** $175\text{ cm}, 50\text{ kg} \rightarrow \text{BMI } 16.3$
+- **Normal Demo:** $170\text{ cm}, 65\text{ kg} \rightarrow \text{BMI } 22.5$
+- **Overweight Demo:** $170\text{ cm}, 78\text{ kg} \rightarrow \text{BMI } 27.0$
+- **Obesity Demo:** $160\text{ cm}, 85\text{ kg} \rightarrow \text{BMI } 33.2$
+
+### 4.9 Theme Support
+Supports instant switching between Material 3 Light Mode and Dark Mode with smooth color transitions.
+
+### 4.10 Complete Reset Functionality & Health Disclaimer
+- **Reset Button:** Clears all input controllers, sliders, calculation results, and error messages, returning the dashboard to its initial ready state.
+- **Health Disclaimer:** Features the mandatory WHO screening notice emphasizing that BMI is an anthropometric screening tool and does not replace medical consultation.
+
+### 4.11 Responsive Design
+Adapts dynamically across screen widths:
+- **Desktop / Tablet ($\ge 960\text{px}$):** Two-column layout (Left: Input Panel & Controls; Right: Results, Gauge, Advice, History).
+- **Mobile Viewport ($< 960\text{px}$):** Stacked vertical scrollable layout with touch-friendly controls.
 
 ---
 
-### 4.3 WHO Adult BMI Classification Table
+## 5. Important Code Snippets
 
-| Category | BMI Range ($\text{kg/m}^2$) | Visual Color Code | Hex Code | Clinical Significance |
-| :--- | :--- | :--- | :--- | :--- |
-| **Underweight** | $< 18.5$ | Sky Blue | `#0288D1` | Possible nutritional deficiency, reduced bone density |
-| **Normal Weight** | $18.5 - 24.9$ | Emerald Green | `#2E7D32` | Lowest statistical risk of morbidity & cardiovascular disease |
-| **Overweight** | $25.0 - 29.9$ | Amber / Orange | `#F57C00` | Increased risk of hypertension, insulin resistance, CVD |
-| **Obesity** | $\ge 30.0$ | Crimson Red | `#D32F2F` | Substantially elevated risk of Type 2 diabetes & metabolic syndrome |
+### 5.1 Application Entry Point
+The application initializes Flutter bindings and launches the `BmiHealthApp` widget.
 
----
-
-## 5. SYSTEM ARCHITECTURE & CODE MODULES
-
-The project is structured according to clean separation of concerns:
-
+```dart
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const BmiHealthApp());
+}
 ```
-bmi_calculator/
+
+### 5.2 BMI Calculation & Healthy Range Algorithms
+Pure Dart algorithms in `BmiCalculatorService` compute BMI and healthy weight boundaries rounded to one decimal place.
+
+```dart
+static double calculateBmi({
+  required double weightKg,
+  required double heightCm,
+}) {
+  if (heightCm <= 0 || weightKg <= 0) {
+    throw ArgumentError('Height and weight must be strictly positive.');
+  }
+  final double heightMeters = heightCm / 100.0;
+  final double rawBmi = weightKg / (heightMeters * heightMeters);
+  return roundToOneDecimal(rawBmi);
+}
+
+static ({double minWeightKg, double maxWeightKg}) calculateHealthyWeightRange(
+  double heightCm,
+) {
+  final double heightM = heightCm / 100.0;
+  final double heightSquared = heightM * heightM;
+  return (
+    minWeightKg: roundToOneDecimal(18.5 * heightSquared),
+    maxWeightKg: roundToOneDecimal(24.9 * heightSquared),
+  );
+}
+```
+
+### 5.3 Unit Conversion Engine (Metric $\leftrightarrow$ Imperial)
+Handles instant two-way conversions between centimeters, feet/inches, kilograms, and pounds.
+
+```dart
+static double feetAndInchesToCm(int feet, double inches) {
+  return roundToOneDecimal((feet * 30.48) + (inches * 2.54));
+}
+
+static ({int feet, double inches}) cmToFeetAndInches(double cm) {
+  final double totalInches = cm / 2.54;
+  final int feet = (totalInches / 12).floor();
+  final double inches = roundToOneDecimal(totalInches % 12);
+  return (feet: feet, inches: inches);
+}
+
+static double lbsToKg(double lbs) => roundToOneDecimal(lbs * 0.45359237);
+static double kgToLbs(double kg) => roundToOneDecimal(kg / 0.45359237);
+```
+
+### 5.4 Defensive Input Validation
+Prevents runtime exceptions and alerts the user to physiological boundary violations.
+
+```dart
+static String? validateHeight(String? value) {
+  if (value == null || value.trim().isEmpty) {
+    return 'Please enter your height in centimeters.';
+  }
+  final double? parsed = double.tryParse(value.trim());
+  if (parsed == null) return 'Invalid entry: height must be a number.';
+  if (parsed <= 0) return 'Height must be greater than zero.';
+  if (parsed < minRealisticHeightCm || parsed > maxRealisticHeightCm) {
+    return 'Height must be between $minRealisticHeightCm and $maxRealisticHeightCm cm.';
+  }
+  return null;
+}
+```
+
+### 5.5 Local Storage Persistence (`StorageService`)
+Saves and retrieves calculation history from browser `LocalStorage` via JSON serialization.
+
+```dart
+static Future<List<BmiRecord>> saveRecord(BmiRecord record) async {
+  final List<BmiRecord> current = await loadHistory();
+  current.insert(0, record);
+  if (current.length > _maxHistoryItems) {
+    current.removeRange(_maxHistoryItems, current.length);
+  }
+  final prefs = await SharedPreferences.getInstance();
+  final String encoded = jsonEncode(current.map((r) => r.toJson()).toList());
+  await prefs.setString(_historyKey, encoded);
+  return current;
+}
+```
+
+### 5.6 Animated Visual Gauge Positioning
+Maps the BMI score to a normalized percentage ($0.0 - 1.0$) across the segmented gauge.
+
+```dart
+static double calculateGaugePosition(double bmi) {
+  final double clamped = bmi.clamp(15.0, 40.0);
+  if (clamped <= 18.5) {
+    return math.max(0.02, (clamped - 15.0) / (18.5 - 15.0) * 0.20);
+  } else if (clamped <= 25.0) {
+    return 0.20 + ((clamped - 18.5) / (25.0 - 18.5) * 0.35);
+  } else if (clamped <= 30.0) {
+    return 0.55 + ((clamped - 25.0) / (30.0 - 25.0) * 0.25);
+  } else {
+    return math.min(0.98, 0.80 + ((clamped - 30.0) / (40.0 - 30.0) * 0.20));
+  }
+}
+```
+
+### 5.7 Theme Management
+Supports dynamic switching between Material 3 Light Mode and Dark Mode.
+
+```dart
+themeMode: _themeMode,
+
+void _toggleTheme() {
+  setState(() {
+    _themeMode = _themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+  });
+}
+```
+
+### 5.8 Project Structure
+```
+VitalScale/
 ├── lib/
-│   ├── main.dart                      # Application entry point, M3 theming, responsive layout
+│   ├── main.dart                      # App entry point, M3 theming, responsive layout
 │   ├── models/
-│   │   ├── bmi_category.dart          # Category enum, color definitions, dietary advice
-│   │   └── bmi_record.dart            # Data transfer object with JSON serialization
+│   │   ├── bmi_category.dart          # WHO Category enum, colors, dietary & activity guidance
+│   │   └── bmi_record.dart            # History record data model with JSON serialization
 │   ├── services/
-│   │   ├── bmi_calculator_service.dart # Pure calculation algorithms, validators, gauge mapping
-│   │   └── storage_service.dart       # SharedPreferences async wrapper for Web LocalStorage
+│   │   ├── bmi_calculator_service.dart # Pure calculation math, unit converters, validators
+│   │   └── storage_service.dart       # SharedPreferences wrapper for web LocalStorage
 │   └── widgets/
 │       ├── bmi_gauge.dart             # Custom animated segmented scale with cursor
-│       ├── category_badge.dart        # Dynamic pill badge showing category & limits
+│       ├── category_badge.dart        # M3 pill badges showing category & limits
 │       ├── health_advice_card.dart    # Healthy weight range & lifestyle advice widget
-│       ├── history_view.dart          # LocalStorage history listing with delete/clear
-│       ├── quick_test_presets.dart    # 1-tap test cases for external exam viva demo
-│       └── exam_info_dialog.dart      # In-app dialog with theoretical formulas & exam info
+│       ├── history_view.dart          # LocalStorage history listing with clear/delete
+│       ├── quick_test_presets.dart    # 1-tap viva demo presets
+│       └── exam_info_dialog.dart      # In-app dialog with theoretical formulas & exam details
 ├── test/
 │   └── widget_test.dart               # Automated unit tests and UI integration tests
 ├── web/
@@ -130,230 +329,259 @@ bmi_calculator/
 │   └── workflows/
 │       └── deploy.yml                 # Automated GitHub Actions deployment pipeline
 ├── vercel.json                        # Vercel cloud deployment configuration
-└── pubspec.yaml                       # Dependencies and asset declarations
+├── DOCUMENTATION_REPORT.md            # Complete printable laboratory report
+├── ANSWER_BOOKLET_SUMMARY.md          # Physical booklet summary & viva prep
+├── pubspec.yaml                       # Dependencies and asset declarations
+└── README.md                          # Repository overview & setup instructions
 ```
 
 ---
 
-## 6. IMPORTANT CODE IMPLEMENTATION
+## 6. Deployment Details
 
-### 6.1 BMI Calculation & Healthy Range Algorithms (`bmi_calculator_service.dart`)
+VitalScale is deployed as a high-performance Flutter Web application hosted globally on GitHub Pages using an automated GitHub Actions CI/CD pipeline.
 
-```dart
-class BmiCalculatorService {
-  static const double minRealisticHeightCm = 50.0;
-  static const double maxRealisticHeightCm = 260.0;
-  static const double minRealisticWeightKg = 10.0;
-  static const double maxRealisticWeightKg = 400.0;
+### 6.1 Deployment Process
+1. **Local Development:** Flutter Web application constructed, modularized, and tested locally.
+2. **Version Control:** Git repository initialized and pushed to GitHub main branch.
+3. **CI/CD Pipeline:** GitHub Actions workflow triggered on every push.
+4. **Environment Setup:** Virtual machine configures Flutter SDK channel `stable`.
+5. **Dependency Resolution:** Runs `flutter pub get` to fetch dependencies.
+6. **Automated Testing:** Runs `flutter test` — all 7 unit and widget tests must pass.
+7. **Release Compilation:** Builds optimized production web bundle:  
+   `flutter build web --release --base-href "/bmi-calculator-lab/"`
+8. **Artifact Upload:** Compresses `build/web` and publishes it to GitHub Pages.
+9. **Global Availability:** Application is immediately reachable via secure HTTPS URL.
 
-  /// Calculates BMI: Weight (kg) / (Height (m) ^ 2)
-  static double calculateBmi({
-    required double weightKg,
-    required double heightCm,
-  }) {
-    if (heightCm <= 0 || weightKg <= 0) {
-      throw ArgumentError('Height and weight must be strictly positive.');
-    }
-    final double heightMeters = heightCm / 100.0;
-    final double rawBmi = weightKg / (heightMeters * heightMeters);
-    return roundToOneDecimal(rawBmi);
-  }
-
-  static double roundToOneDecimal(double value) {
-    return (value * 10).round() / 10.0;
-  }
-
-  /// Calculates healthy weight range: 18.5 * H^2 to 24.9 * H^2
-  static ({double minWeightKg, double maxWeightKg}) calculateHealthyWeightRange(
-    double heightCm,
-  ) {
-    final double heightM = heightCm / 100.0;
-    final double heightSquared = heightM * heightM;
-    return (
-      minWeightKg: roundToOneDecimal(18.5 * heightSquared),
-      maxWeightKg: roundToOneDecimal(24.9 * heightSquared),
-    );
-  }
-}
-```
-
----
-
-### 6.2 Defensive Input Validation (`bmi_calculator_service.dart`)
-
-```dart
-static String? validateHeight(String? value) {
-  if (value == null || value.trim().isEmpty) {
-    return 'Please enter your height in centimeters.';
-  }
-  final double? parsed = double.tryParse(value.trim());
-  if (parsed == null) {
-    return 'Invalid entry: height must be a valid number.';
-  }
-  if (parsed <= 0) {
-    return 'Height must be greater than zero.';
-  }
-  if (parsed < minRealisticHeightCm || parsed > maxRealisticHeightCm) {
-    return 'Height must be between $minRealisticHeightCm and $maxRealisticHeightCm cm.';
-  }
-  return null;
-}
-```
-
----
-
-### 6.3 Local Storage History Persistence (`storage_service.dart`)
-
-```dart
-class StorageService {
-  static const String _historyKey = 'bmi_calculation_history_v1';
-  static const int _maxHistoryItems = 30;
-
-  static Future<List<BmiRecord>> loadHistory() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String? rawJson = prefs.getString(_historyKey);
-    if (rawJson == null || rawJson.trim().isEmpty) return [];
-
-    final List<dynamic> decoded = jsonDecode(rawJson) as List<dynamic>;
-    return decoded.map((item) => BmiRecord.fromJson(item)).toList();
-  }
-
-  static Future<List<BmiRecord>> saveRecord(BmiRecord record) async {
-    final List<BmiRecord> current = await loadHistory();
-    current.insert(0, record);
-    if (current.length > _maxHistoryItems) {
-      current.removeRange(_maxHistoryItems, current.length);
-    }
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_historyKey, jsonEncode(current.map((r) => r.toJson()).toList()));
-    return current;
-  }
-}
-```
-
----
-
-### 6.4 Reset Functionality (`main.dart`)
-
-```dart
-void _resetAll() {
-  _formKey.currentState?.reset();
-  setState(() {
-    _heightController.clear();
-    _weightController.clear();
-    _ageController.text = '22';
-    _selectedGender = 'Male';
-    _calculatedBmi = null;
-    _calculatedCategory = null;
-    _lastHeight = null;
-    _lastWeight = null;
-  });
-
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(
-      content: Text('Inputs and calculation results reset successfully.'),
-      behavior: SnackBarBehavior.floating,
-      duration: Duration(seconds: 2),
-    ),
-  );
-}
-```
-
----
-
-## 7. USER INTERFACE LAYOUT & WIREFRAME
-
-### High-Contrast Wireframe (Desktop Viewport)
+### 6.2 Deployment Workflow Diagram
 
 ```
-+-----------------------------------------------------------------------------------------+
-| [❤] BMI & Health Calculator    College UI Flutter Lab Exam          [ⓘ Info] [☼ Theme] |
-+-----------------------------------------------------------------------------------------+
-| QUICK TEST PRESETS: [Underweight (175,50)] [Normal (170,65)] [Overweight] [Obesity]    |
-+---------------------------------------------------+-------------------------------------+
-| LEFT PANEL: BODY PARAMETERS                       | RIGHT PANEL: RESULTS & ANALYSIS     |
-|                                                   |                                     |
-| Gender: [ Male ] ( Female ) ( Other )             | CALCULATED RESULT:   [Normal Weight]|
-|                                                   |                                     |
-| Height (cm): [ 170              ] [cm] [x]        |             24.2 kg/m²              |
-| [----●------------------------------] 170 cm      | WHO Classification: Normal Weight   |
-| [-5] [-1] [+1] [+5]                               |                                     |
-|                                                   | BMI VISUAL SCALE:                   |
-| Weight (kg): [ 70.0             ] [kg] [x]        | [Blue | Green====| Orange | Red   ] |
-| [-------●---------------------------] 70.0 kg     |   15.0   18.5   25.0   30.0   40.0      |
-| [-5] [-1] [+1] [+5]                               |                                     |
-|                                                   | ESTIMATED HEALTHY WEIGHT RANGE:     |
-| Age: [ 22                 ] [yrs]                 |          53.5 kg – 72.0 kg          |
-|                                                   | Status: In ideal healthy weight     |
-| [ Reset ]              [ Calculate BMI ]          |                                     |
-|                                                   | DIETARY & LIFESTYLE ADVICE:         |
-|                                                   | • Whole grains & lean protein       |
-|                                                   | • 150 mins weekly exercise          |
-|                                                   |                                     |
-|                                                   | CALCULATION HISTORY:   [Clear All]  |
-|                                                   | • 170 cm, 70.0 kg -> 24.2 (Normal)  |
-|                                                   | • Nov 9, 2026, 06:45 PM             |
-+---------------------------------------------------+-------------------------------------+
-| HEALTH DISCLAIMER:                                                                      |
-| BMI is a screening tool and does not directly measure body fat or diagnose medical     |
-| conditions. Consult a qualified healthcare professional for medical advice.             |
-+-----------------------------------------------------------------------------------------+
+Local Flutter Project
+        ↓
+    Git Commit
+        ↓
+GitHub Remote Repository (main branch)
+        ↓
+GitHub Actions CI/CD Pipeline
+        ↓
+flutter pub get
+        ↓
+flutter test (7 Passed, 0 Failed)
+        ↓
+flutter build web --release
+        ↓
+build/web Artifact Upload
+        ↓
+GitHub Pages CDN
+        ↓
+Live VitalScale Web Application
 ```
 
----
-
-## 8. AUTOMATED TESTING VERIFICATION
-
-The project incorporates both unit testing and UI integration widget testing executed via `flutter test`.
-
-### Test Summary:
-- **Total Test Cases:** 6
-- **Pass Rate:** 100% (6 Passed, 0 Failed, 0 Flaky)
-- **Execution Time:** ~1.2 seconds
-
-| Test Group | Test Case Description | Tested Scenario | Expected Result | Status |
-| :--- | :--- | :--- | :--- | :--- |
-| **Unit Tests** | BMI Accuracy Test | $170\text{ cm}, 70\text{ kg}$ | $24.2\text{ kg/m}^2$ | **PASSED** |
-| **Unit Tests** | WHO Category Classification | Boundary values ($18.4, 18.5, 24.9, 25.0, 30.0$) | Correct enum match | **PASSED** |
-| **Unit Tests** | Healthy Weight Range | $170\text{ cm}$ | $53.5\text{ kg} - 72.0\text{ kg}$ | **PASSED** |
-| **Unit Tests** | Height Input Validation | Null, empty, zero, negative, alphabets, out-of-range | Validation errors thrown | **PASSED** |
-| **Unit Tests** | Weight Input Validation | Zero, negative, string, out-of-range ($5\text{ kg}, 450\text{ kg}$) | Validation errors thrown | **PASSED** |
-| **Widget Tests** | UI Render & Calculation | Initial render, button taps, reset trigger | State resets cleanly | **PASSED** |
+### 6.3 Deployment Links
+- **Live Application:** [https://narayanakadali.github.io/bmi-calculator-lab/](https://narayanakadali.github.io/bmi-calculator-lab/)
+- **Source Code Repository:** [https://github.com/Narayanakadali/bmi-calculator-lab](https://github.com/Narayanakadali/bmi-calculator-lab)
 
 ---
 
-## 9. DEPLOYMENT CONFIGURATION & INSTRUCTIONS
+## 7. Screenshots / UI Output
 
-The application is prepared for immediate deployment using two industry-standard hosting solutions.
-
-### 9.1 Option A: GitHub Pages via GitHub Actions (Recommended)
-1. Push the project repository to GitHub:
-   ```bash
-   git branch -M main
-   git push -u origin main
-   ```
-2. Navigate to your repository on GitHub:
-   - Go to **Settings** > **Pages**.
-   - Under **Build and deployment** > **Source**, select **GitHub Actions**.
-3. The `.github/workflows/deploy.yml` workflow triggers automatically:
-   - Sets up the Flutter SDK.
-   - Executes `flutter test`.
-   - Builds the production web app with `--base-href "/bmi-calculator-lab/"`.
-   - Publishes the build to GitHub Pages.
-4. The live application will be available at:
-   $$\text{https://narayanakadali.github.io/bmi-calculator-lab/}$$
+### Screenshot 1 — Main Dashboard & Dual-Unit Parameters
+```
++-------------------------------------------------------------------------------------------------+
+| [❤] VitalScale — BMI & Health Calculator   College UI Flutter Lab Exam     [ⓘ Info]  [☼ Theme] |
++-------------------------------------------------------------------------------------------------+
+| QUICK EXAM TEST PRESETS: [Underweight (175,50)] [Normal (170,65)] [Overweight] [Obesity]       |
++----------------------------------------------------+--------------------------------------------+
+| BODY PARAMETERS                                    | CALCULATED RESULT          [Normal Weight] |
+|                                                    |                                            |
+| Gender: [ Male ] ( Female ) ( Other )              |                 24.2 kg/m²                 |
+|                                                    | WHO Classification: Normal Weight          |
+| Height (Centimeters)             [ cm | ft & in ]  | 170 cm (5' 7.0")  •  70.0 kg (154.3 lbs)   |
+| [ 170                        ] [cm] [x]            |                                            |
+| ≈ 5 ft 7 in (66.9 inches)                          | BMI VISUAL SCALE:                          |
+| [--------●-------------------------] 170 cm        | [Blue  | Green=====| Orange | Red       ]  |
+| [-5 cm] [-1 cm] [+1 cm] [+5 cm]                    |   15.0     18.5      25.0     30.0   40.0  |
+|                                                    |                                            |
+| Weight (Kilograms)                 [ kg | lbs ]    | HEALTH & WEIGHT ANALYSIS                   |
+| [ 70.0                       ] [kg] [x]            | Estimated Healthy Range:                   |
+| ≈ 154.3 lbs                                        |          53.5 kg – 72.0 kg                 |
+| [-----------●----------------------] 70.0 kg       | Status: Currently in ideal healthy range   |
+| [-5 kg] [-1 kg] [+1 kg] [+5 kg]                    |                                            |
+|                                                    | DIETARY & LIFESTYLE ADVICE:                |
+| Age: [ 22                    ] [yrs]               | • Whole grains & lean protein daily        |
+|                                                    | • 150 mins weekly aerobic exercise         |
+| [ Reset ]                       [ Calculate BMI ]  |                                            |
+|                                                    | CALCULATION HISTORY:          [Clear All]  |
+|                                                    | • 170 cm, 70.0 kg -> 24.2 (Normal Weight)  |
+|                                                    |   Nov 10, 2026 • 08:00 AM                  |
++----------------------------------------------------+--------------------------------------------+
+| HEALTH DISCLAIMER:                                                                              |
+| BMI is a screening tool and does not directly measure body fat or diagnose medical conditions.  |
+| Consult a qualified healthcare professional for medical advice.                                 |
++-------------------------------------------------------------------------------------------------+
+```
+*Figure 1: VitalScale Main Dashboard (Dual Column Desktop View)*
 
 ---
 
-### 9.2 Option B: Vercel Deployment (Alternative Instant Deploy)
-1. Sign in to [Vercel](https://vercel.com).
-2. Click **Add New** > **Project** and select your GitHub repository.
-3. Vercel automatically detects `vercel.json`:
-   - Build Command: `flutter build web --release`
-   - Output Directory: `build/web`
-4. Click **Deploy**. The live application URL is generated immediately (e.g., `https://bmi-calculator-lab.vercel.app`).
+### Screenshot 2 — Imperial Units Active (Feet/Inches & Pounds)
+```
++----------------------------------------------------+
+| Height (Feet & Inches)            [ cm | ft & in ] |
+| [ 5         ] ft       [ 7.0       ] in            |
+| ≈ 170 cm (67.0 total inches)                       |
+| [-1 in] [+1 in] [-1 ft] [+1 ft]                    |
+|                                                    |
+| Weight (Pounds)                       [ kg | lbs ] |
+| [ 154.3                             ] [lbs]        |
+| ≈ 70.0 kg                                          |
+| [----------●-----------------------] 154.3 lbs     |
+| [-10 lbs] [-2 lbs] [+2 lbs] [+10 lbs]              |
++----------------------------------------------------+
+```
+*Figure 2: Imperial Units Input Mode with Real-Time Conversion Display*
 
 ---
 
-## 10. CONCLUSION
-The **BMI & Health Calculator** project fulfills all requirements established by the college examination committee. It features robust mathematical algorithms, clinical safety disclaimers, responsive design, interactive animated scales, persistent browser storage, comprehensive automated test coverage, and turnkey cloud deployment configurations.
+### Screenshot 3 — Underweight Evaluation Output
+```
++----------------------------------------------------+
+| CALCULATED RESULT                    [Underweight] |
+|                                                    |
+|                 16.3 kg/m²                         |
+| WHO Classification: Underweight                    |
+| 175 cm (5' 8.9")  •  50.0 kg (110.2 lbs)           |
+|                                                    |
+| BMI SCALE:                                         |
+| [Blue==| Green     | Orange     | Red            ] |
+|   ▲ (Needle positioned at 16.3)                    |
+|                                                    |
+| HEALTH ANALYSIS:                                   |
+| Estimated Healthy Range: 56.7 kg – 76.3 kg         |
+| Status: 6.7 kg below minimum healthy weight        |
++----------------------------------------------------+
+```
+*Figure 3: Underweight Test Output with Category Indicator and Scale Pointer*
+
+---
+
+### Screenshot 4 — Overweight Evaluation Output
+```
++----------------------------------------------------+
+| CALCULATED RESULT                     [Overweight] |
+|                                                    |
+|                 27.0 kg/m²                         |
+| WHO Classification: Overweight                     |
+| 170 cm (5' 7.0")  •  78.0 kg (172.0 lbs)           |
+|                                                    |
+| BMI SCALE:                                         |
+| [Blue  | Green     | Orange==   | Red            ] |
+|                        ▲ (Needle positioned at 27.0)|
+|                                                    |
+| HEALTH ANALYSIS:                                   |
+| Estimated Healthy Range: 53.5 kg – 72.0 kg         |
+| Status: 6.0 kg above maximum healthy weight        |
++----------------------------------------------------+
+```
+*Figure 4: Overweight Test Output with Caloric Reduction Advice*
+
+---
+
+### Screenshot 5 — Obesity Evaluation Output
+```
++----------------------------------------------------+
+| CALCULATED RESULT                        [Obesity] |
+|                                                    |
+|                 33.2 kg/m²                         |
+| WHO Classification: Obesity                        |
+| 160 cm (5' 3.0")  •  85.0 kg (187.4 lbs)           |
+|                                                    |
+| BMI SCALE:                                         |
+| [Blue  | Green     | Orange     | Red====        ] |
+|                                     ▲ (At 33.2)    |
+|                                                    |
+| HEALTH ANALYSIS:                                   |
+| Estimated Healthy Range: 47.4 kg – 63.7 kg         |
+| Status: 21.3 kg above maximum healthy weight       |
++----------------------------------------------------+
+```
+*Figure 5: Obesity Test Output with Clinical Consultation Recommendation*
+
+---
+
+### Screenshot 6 — Calculation History Management
+```
++-----------------------------------------------------------------+
+| CALCULATION HISTORY                              [Clear All (3)]|
+|-----------------------------------------------------------------|
+| (24.2) 170 cm • 70.0 kg [Normal Weight]                         |
+|        Nov 10, 2026 • 08:00 AM                              [x] |
+|-----------------------------------------------------------------|
+| (27.0) 170 cm • 78.0 kg [Overweight]                            |
+|        Nov 10, 2026 • 07:55 AM                              [x] |
+|-----------------------------------------------------------------|
+| (16.3) 175 cm • 50.0 kg [Underweight]                           |
+|        Nov 10, 2026 • 07:50 AM                              [x] |
++-----------------------------------------------------------------+
+```
+*Figure 6: Browser LocalStorage Calculation History with Reload and Deletion*
+
+---
+
+### Screenshot 7 — Settings & Theme Toggle
+```
++-----------------------------------------------------------------+
+| [←] Settings                                                    |
+|                                                                 |
+| Appearance                                                      |
+| [☼] Dark Mode                                          [ (●) ]  |
+|     Modern Material 3 dark theme is enabled                     |
+|                                                                 |
+| Data Management                                                 |
+| [🗑] Clear Local Data                                           |
+|     Remove all saved BMI records from browser storage       [>] |
+|                                                                 |
+| About                                                           |
+| [ⓘ] VitalScale — Version 1.0.0+1                                |
+|     UI Design – Flutter Laboratory External Examination         |
++-----------------------------------------------------------------+
+```
+*Figure 7: Application Settings and Theme Configuration Interface*
+
+---
+
+### Screenshot 8 — Mobile Responsive UI
+```
++-------------------------------+
+| [❤] VitalScale        [☼] [ⓘ] |
++-------------------------------+
+| QUICK PRESETS:                |
+| [Normal] [Under] [Over] [Obese]
++-------------------------------+
+| BODY PARAMETERS               |
+|                               |
+| Height: [ 170     ] [cm]      |
+| [------●-----------------]    |
+|                               |
+| Weight: [ 70.0    ] [kg]      |
+| [---------●--------------]    |
+|                               |
+| [ Reset ]   [ Calculate BMI ] |
++-------------------------------+
+| CALCULATED RESULT             |
+|                               |
+|          24.2 kg/m²           |
+|      Normal Weight (WHO)      |
+|                               |
+| [Blue | Green== | Org | Red]  |
+|                               |
+| Healthy: 53.5 kg – 72.0 kg    |
++-------------------------------+
+| [📜] CALCULATION HISTORY      |
+| • 170 cm, 70 kg → 24.2 (Nov 10)
++-------------------------------+
+| HEALTH DISCLAIMER             |
+| Consult a healthcare expert   |
++-------------------------------+
+```
+*Figure 8: Responsive Mobile Smartphone Layout*

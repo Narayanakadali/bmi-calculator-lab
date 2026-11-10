@@ -99,7 +99,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify Title
-      expect(find.text('BMI & Health Calculator'), findsOneWidget);
+      expect(find.text('VitalScale: BMI & Health Calculator'), findsOneWidget);
 
       // Verify Input Labels
       expect(find.text('Height (Centimeters)'), findsOneWidget);
